@@ -1,5 +1,6 @@
 # Using a .py file here instead of a notebook because jupyter itself runs an event loop. Rare situation
-# where jupyter is a bad demonstration tool
+# where jupyter is a poor demonstration tool. At any rate, this achieves no meaningful performance
+# advantage, which shouldn't be too surprising but I wanted to check it out anyway.
 
 import time
 import cogmodel
@@ -7,6 +8,7 @@ import asyncio
 from ticdat import Progress, LogFile
 
 dat = cogmodel.input_schema.json.create_tic_dat("cog_sample_data.json")
+dat.parameters["Gurobi LogToConsole"] = 0
 assert dat.parameters["Number of Centroids"]["Value"] == 3
 
 dat_2 = cogmodel.input_schema.copy_tic_dat(dat)

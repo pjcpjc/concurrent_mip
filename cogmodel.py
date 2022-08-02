@@ -44,6 +44,10 @@ input_schema.set_data_type("sites", "Center Status", number_allowed=False,
 input_schema.set_data_type("sites", "Demand")
 input_schema.set_data_type("distance", "Distance")
 
+input_schema.add_parameter("Gurobi Threads", default_value=None, inclusive_min=True, inclusive_max=False, min=1,
+                                max=float("inf"), must_be_int=True, nullable=True)
+input_schema.add_parameter("Gurobi LogToConsole", default_value=1, inclusive_min=True, inclusive_max=True, min=0,
+                                max=1, must_be_int=True)
 input_schema.add_parameter("Number of Centroids", default_value=1, inclusive_min=False, inclusive_max=False, min=0,
                                 max=float("inf"), must_be_int=True)
 input_schema.add_parameter("MIP Gap", default_value=0.001, inclusive_min=False, inclusive_max=False, min=0,
@@ -68,6 +72,8 @@ def solve(dat, diagnostic_log, error_and_warning_log, progress):
     assert input_schema.good_tic_dat_object(dat)
     assert not input_schema.find_foreign_key_failures(dat)
     assert not input_schema.find_data_type_failures(dat)
+    assert not input_schema.find_data_row_failures(dat)
+
     diagnostic_log.write("COG output log\n%s\n\n" % time_stamp())
     error_and_warning_log.write("COG error log\n%s\n\n" % time_stamp())
 
@@ -106,6 +112,9 @@ def solve(dat, diagnostic_log, error_and_warning_log, progress):
     progress.numerical_progress("Feasibility Analysis" , 100)
 
     m = gu.Model("cog", env=gurobi_env())
+    if full_parameters["Gurobi Threads"]:
+        m.setParam("Threads", full_parameters["Gurobi Threads"])
+    m.setParam("LogToConsole", full_parameters["Gurobi LogToConsole"])
 
     assign_vars = {(n, assigned_to) : m.addVar(vtype = gu.GRB.BINARY,
                                         name = "%s_%s"%(n,assigned_to),
