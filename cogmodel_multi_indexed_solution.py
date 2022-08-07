@@ -18,6 +18,7 @@ input_schema = TicDatFactory (
      parameters = [["Parameter"], ["Value"]])
 
 input_schema.set_data_type("solutions", "Number of Centroids", must_be_int=True, min=1, max=float("inf"))
+input_schema.set_default_value("solutions", "Number of Centroids", 1)
 # add foreign key constraints
 input_schema.add_foreign_key("distance", "sites", ['Source', 'Name'])
 input_schema.add_foreign_key("distance", "sites", ['Destination', 'Name'])
@@ -25,6 +26,8 @@ input_schema.add_foreign_key("distance", "sites", ['Destination', 'Name'])
 # center_status is a flag field which can take one of two string values.
 input_schema.set_data_type("sites", "Center Status", number_allowed=False,
                           strings_allowed=["Can Be Center", "Pure Demand Point"])
+input_schema.set_default_value("sites", "Center Status", "Pure Demand Point")
+
 # The default type of non infinite, non negative works for distance and demand
 input_schema.set_data_type("sites", "Demand")
 input_schema.set_data_type("distance", "Distance")
